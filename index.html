@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <body style="overflow: hidden;">
+    <div id="buffer" style="font-size: 50px; text-align: center; min-height: 50px;"></div>
     <div id="letter" style="font-size: 600px; text-align: center;"></div>
     <script>
       var keyDisplays = {
@@ -10,20 +11,31 @@
       var keyUtterances = {
         " ": "Space"
       };
+      var keyToBufText = { "Meta": "", "Control": "", "Shift": "", "CapsLock": "", "Alt": "" };
       var buffer = "";
+      var saidBuffer = false;
       window.addEventListener("keydown", function(ev) {
         if (ev.key == "Enter") {
           window.speechSynthesis.speak(new SpeechSynthesisUtterance(buffer));
-          buffer = "";
+          saidBuffer = true;
         } else {
           if (ev.key == "Backspace") {
-            buffer = buffer.slice(0, buffer.length-1);
+            if (saidBuffer) {
+              buffer = "";
+              saidBuffer = false;
+            } else {
+              buffer = buffer.slice(0, buffer.length-1);
+            }
           } else {
-            buffer += ev.key;
+            buffer += keyToBufText.hasOwnProperty(ev.key) ? keyToBufText[ev.key] : ev.key;
+            saidBuffer = false;
           }
           document.getElementById("letter").innerText = keyDisplays[ev.key] || ev.key;
           window.speechSynthesis.speak(new SpeechSynthesisUtterance(keyUtterances[ev.key] || ev.key));
         }
+
+        document.getElementById("buffer").innerText = buffer;
+        document.body.style.backgroundColor = saidBuffer ? "#a3ffa3" : "white";
       });
     </script>
   </body>
