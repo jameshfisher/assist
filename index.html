@@ -3,6 +3,13 @@
   <body style="overflow: hidden;">
     <div id="letter" style="font-size: 600px; text-align: center;"></div>
     <script>
+      var keyDisplays = {
+        " ": "Space",
+        "Backspace": "⌫"
+      };
+      var keyUtterances = {
+        " ": "Space"
+      };
       var buffer = "";
       window.addEventListener("keydown", function(ev) {
         if (ev.key == "Enter") {
@@ -14,9 +21,8 @@
           } else {
             buffer += ev.key;
           }
-          var say = ev.key === " " ? "Space" : ev.key;
-          document.getElementById("letter").innerText = say;
-          window.speechSynthesis.speak(new SpeechSynthesisUtterance(say));
+          document.getElementById("letter").innerText = keyDisplays[ev.key] || ev.key;
+          window.speechSynthesis.speak(new SpeechSynthesisUtterance(keyUtterances[ev.key] || ev.key));
         }
       });
     </script>
