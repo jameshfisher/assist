@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <body style="overflow: hidden;">
+    <div id="letter" style="font-size: 600px; text-align: center;"></div>
+    <script>
+      var buffer = "";
+      window.addEventListener("keydown", function(ev) {
+        if (ev.key == "Enter") {
+          window.speechSynthesis.speak(new SpeechSynthesisUtterance(buffer));
+          buffer = "";
+        } else {
+          if (ev.key == "Backspace") {
+            buffer = buffer.slice(0, buffer.length-1);
+          } else {
+            buffer += ev.key;
+          }
+          var say = ev.key === " " ? "Space" : ev.key;
+          document.getElementById("letter").innerText = say;
+          window.speechSynthesis.speak(new SpeechSynthesisUtterance(say));
+        }
+      });
+    </script>
+  </body>
+</html>
