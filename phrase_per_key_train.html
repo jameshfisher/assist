@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <body style="overflow: hidden;">
+    <div id="target" style="font-size: 300px; text-align: center;"></div>
+    <div id="attempt" style="font-size: 150px; text-align: center;"></div>
+    <script>
+      var letter = "";
+
+      phrases = [
+        "Can I say",
+        "Yes",
+        "No",
+        "Maybe",
+
+        "Okay",
+        "Toilet",
+
+        "Please",
+        "Thank you",
+
+        "Hello",
+        "Good bye",
+
+        "Mary",
+        "Gaynor",
+        "Josie",
+        "Beth"
+      ];
+
+      var target = "";
+      var attempt = "";
+
+      function upd() {
+        document.getElementById("target").innerText = target;
+        document.getElementById("attempt").innerText = attempt;
+      }
+
+      window.addEventListener("keydown", function(ev) {
+        var i = ev.keyCode - 65;
+        if (0 <= i && i < phrases.length) {
+          attempt = phrases[i];
+
+          if (attempt === target) {
+            target = phrases[Math.floor(Math.random() * phrases.length)];
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance("Well done, that's " + attempt + "; Now say, " + target));
+          } else {
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance("Sorry, that's " + attempt + "; Please say, " + target));
+          }
+          upd();
+        }
+      });
+
+      target = phrases[Math.floor(Math.random() * phrases.length)];
+      window.speechSynthesis.speak(new SpeechSynthesisUtterance("Please say, " + target));
+      upd();
+    </script>
+  </body>
+</html>

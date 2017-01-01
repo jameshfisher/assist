@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <body style="overflow: hidden;">
+    <div id="buffer" style="font-size: 50px; text-align: center; min-height: 50px;"></div>
+    <div id="letter" style="font-size: 600px; text-align: center;"></div>
+    <script>
+      var buffer = "";
+
+      function upd() {
+        document.getElementById("buffer").innerText = buffer;
+      }
+
+      window.addEventListener("keydown", function(ev) {
+        buffer += ev.keyCode + "  ";
+        window.speechSynthesis.speak(new SpeechSynthesisUtterance(ev.keyCode));
+        upd();
+      });
+    </script>
+  </body>
+</html>

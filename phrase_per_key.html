@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <body style="overflow: hidden;">
+    <div id="buffer" style="font-size: 50px; text-align: center; min-height: 50px;"></div>
+    <div id="letter" style="font-size: 300px; text-align: center;"></div>
+    <script>
+      var buffer = "";
+      var letter = "";
+
+      phrases = [
+        "Can I say",
+        "Yes",
+        "No",
+        "Maybe",
+
+        "Okay",
+        "Toilet",
+
+        "Please",
+        "Thank you",
+
+        "Hello",
+        "Good bye",
+
+        "Mary",
+        "Gaynor",
+        "Josie",
+        "Beth"
+      ];
+
+      function upd() {
+        document.getElementById("buffer").innerText = buffer;
+        document.getElementById("letter").innerText = letter;
+      }
+
+      window.addEventListener("keydown", function(ev) {
+        var i = ev.keyCode - 65;
+        if (0 <= i && i < phrases.length) {
+          phrase = phrases[i];
+          console.log("phrase", phrase);
+          letter = phrase;
+          window.speechSynthesis.speak(new SpeechSynthesisUtterance(phrase));
+          upd();
+        }
+      });
+    </script>
+  </body>
+</html>
