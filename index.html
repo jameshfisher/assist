@@ -1,81 +1,57 @@
 <!doctype html>
 <html lang="en">
   <body style="overflow: hidden;">
-    <div id="buffer" style="font-size: 50px; text-align: center; min-height: 50px;"></div>
-    <div id="letter" style="font-size: 600px; text-align: center;"></div>
+    <div style="font-size: 400px; text-align: center; min-height: 50px;"><span id="buffer"></span><span id="letter" style="border-right: 1px solid black; background-color: #aaa;"></div></div>
     <script>
-      var keyDisplays = {
-        " ": "Space",
-        "Backspace": "⌫"
-      };
-      var keyUtterances = {
-        " ": "Space"
-      };
-      var keyToBufText = { "Meta": "", "Control": "", "Shift": "", "CapsLock": "", "Alt": "" };
-      // etaoinshrdlcumwfgypbvkjxqz
-
-      var lettersInFrequencyOrder = " BEetaoinshrdlcumwfgypbvkjxqz";
-      var buttonsInEasyOrder = ["7", "8", "5", "6", "3", "2", "1", "4"];
-
-      var buffer = "";
-      var saidBuffer = false;
-
-      function upd() {
-        document.getElementById("buffer").innerText = buffer;
-        document.body.style.backgroundColor = saidBuffer ? "#a3ffa3" : "white";
+      function say(ss) {
+        window.speechSynthesis.cancel();
+        for (var i = 0; i < ss.length; i++) {
+          window.speechSynthesis.speak(new SpeechSynthesisUtterance(ss[i]));
+        }
       }
 
+      var buffer = "";
+      var letter = "a";
+
+      function upd() {
+        document.getElementById("buffer").innerHTML = buffer.replace(" ", "&nbsp;");
+        document.getElementById("letter").innerText = letter;
+      }
+
+      var scroll = {71: -1, 73: 1 };
+
       window.addEventListener("keydown", function(ev) {
-        if (ev.key === "Enter") {
-          window.speechSynthesis.speak(new SpeechSynthesisUtterance(buffer));
-          saidBuffer = true;
-        } else {
-          if (ev.key === "Backspace") {
-            if (saidBuffer) {
-              buffer = "";
-              saidBuffer = false;
-            } else {
-              buffer = buffer.slice(0, buffer.length-1);
-            }
+        console.log("pressed keycode", ev.keyCode);
+        if (ev.keyCode === 72) {
+          buffer = buffer.slice(0, buffer.length-1);
+          say(["Backspace", buffer]);
+        } else /*if (ev.keyCode === 72) {
+          buffer = "";
+          letter = "a";
+          say(["Erased"]);
+        } else */if (ev.keyCode === 74) {
+          buffer += letter;
+          say([letter,buffer]);
+        } /*else if (ev.keyCode === 74) {
+          if (buffer.trim() === "") {
+            say(["empty"]);
+          } else {
+            say([buffer]);
           }
-
-          console.log("key", ev.key);
-
-          var key = { "!": "1", "@": "2", "£": "3", "$": "4", "%": "5", "^": "6", "&": "7", "*": "8" }[ev.key] || ev.key;
-
-          var i = buttonsInEasyOrder.indexOf(key);
-          if (i != -1) {
-            if (ev.shiftKey) { i += buttonsInEasyOrder.length; }
-            if (ev.ctrlKey)  { i += buttonsInEasyOrder.length*2; }
-
-            console.log("command code", i);
-
-            if (i < lettersInFrequencyOrder.length) {
-              var letter = lettersInFrequencyOrder[i];
-
-              if (letter === "E") {
-                window.speechSynthesis.speak(new SpeechSynthesisUtterance(buffer));
-                saidBuffer = true;
-              } else if (letter === "B") {
-                if (saidBuffer) {
-                  buffer = "";
-                  saidBuffer = false;
-                } else {
-                  buffer = buffer.slice(0, buffer.length-1);
-                }
-              } else {
-                buffer += letter;
-                saidBuffer = false;
-
-                document.getElementById("letter").innerText = letter === " " ? "Space" : letter;
-                window.speechSynthesis.speak(new SpeechSynthesisUtterance(letter === " " ? "Space" : letter));
-              }
-            }
-          }
+        } else */ if (ev.keyCode === 66 || ev.keyCode === 67) {
+          buffer += " ";
+          say(["space"]);
+        } else if (ev.keyCode in scroll) {
+          var incr = scroll[ev.keyCode];
+          var l = letter.charCodeAt(0) - "a".charCodeAt(0);
+          var l2 = (l+26+incr) % 26;
+          letter = String.fromCharCode("a".charCodeAt(0) + l2);
+          say([letter]);
         }
-
         upd();
       });
+
+      upd();
     </script>
   </body>
 </html>

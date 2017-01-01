@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <body style="overflow: hidden;">
+    <div id="buffer" style="font-size: 50px; text-align: center; min-height: 50px;"></div>
+    <div id="letter" style="font-size: 600px; text-align: center;"></div>
+    <script>
+      var keyDisplays = {
+        " ": "Space",
+        "Backspace": "⌫"
+      };
+      var keyUtterances = {
+        " ": "Space"
+      };
+      var keyToBufText = { "Meta": "", "Control": "", "Shift": "", "CapsLock": "", "Alt": "" };
+      // etaoinshrdlcumwfgypbvkjxqz
+
+      var lettersInFrequencyOrder = " BEetaoinshrdlcumwfgypbvkjxqz";
+      var buttonsInEasyOrder = ["7", "8", "5", "6", "3", "2", "1", "4"];
+
+      var buffer = "";
+      var saidBuffer = false;
+
+      function upd() {
+        document.getElementById("buffer").innerText = buffer;
+        document.body.style.backgroundColor = saidBuffer ? "#a3ffa3" : "white";
+      }
+
+      window.addEventListener("keydown", function(ev) {
+        if (ev.key === "Enter") {
+          window.speechSynthesis.speak(new SpeechSynthesisUtterance(buffer));
+          saidBuffer = true;
+        } else {
+          if (ev.key === "Backspace") {
+            if (saidBuffer) {
+              buffer = "";
+              saidBuffer = false;
+            } else {
+              buffer = buffer.slice(0, buffer.length-1);
+            }
+          }
+
+          console.log("key", ev.key);
+
+          var key = { "!": "1", "@": "2", "£": "3", "$": "4", "%": "5", "^": "6", "&": "7", "*": "8" }[ev.key] || ev.key;
+
+          var i = buttonsInEasyOrder.indexOf(key);
+          if (i != -1) {
+            if (ev.shiftKey) { i += buttonsInEasyOrder.length; }
+            if (ev.ctrlKey)  { i += buttonsInEasyOrder.length*2; }
+
+            console.log("command code", i);
+
+            if (i < lettersInFrequencyOrder.length) {
+              var letter = lettersInFrequencyOrder[i];
+
+              if (letter === "E") {
+                window.speechSynthesis.speak(new SpeechSynthesisUtterance(buffer));
+                saidBuffer = true;
+              } else if (letter === "B") {
+                if (saidBuffer) {
+                  buffer = "";
+                  saidBuffer = false;
+                } else {
+                  buffer = buffer.slice(0, buffer.length-1);
+                }
+              } else {
+                buffer += letter;
+                saidBuffer = false;
+
+                document.getElementById("letter").innerText = letter === " " ? "Space" : letter;
+                window.speechSynthesis.speak(new SpeechSynthesisUtterance(letter === " " ? "Space" : letter));
+              }
+            }
+          }
+        }
+
+        upd();
+      });
+    </script>
+  </body>
+</html>
